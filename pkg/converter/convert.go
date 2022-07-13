@@ -166,78 +166,18 @@ func Convert(o Options) error {
 			APIVersion: execAPIVersion,
 		}
 
-		if isExecUsingkubelogin(authInfo) {
+		if isExecUsingkubelogin(authInfo) && o.TokenOptions.LoginMethod == token.AzureCLILogin {
 
-			switch o.TokenOptions.LoginMethod {
-			case token.AzureCLILogin:
-				if goody.argServerIDVal == "" {
-					return fmt.Errorf("Err: Invalid arg %v", argServerID)
-				}
-
-				exec.Args = append(exec.Args, argServerID)
-				exec.Args = append(exec.Args, goody.argServerIDVal)
-				exec.Args = append(exec.Args, argLoginMethod)
-				exec.Args = append(exec.Args, o.TokenOptions.LoginMethod)
-
-			case token.ServicePrincipalLogin, token.ROPCLogin, token.DeviceCodeLogin, token.MSILogin, token.WorkloadIdentityLogin:
-
-				if !isAlternativeLogin && o.isSet(flagEnvironment) {
-					exec.Args = append(exec.Args, argEnvironment)
-					exec.Args = append(exec.Args, o.TokenOptions.Environment)
-				} else if !isAlternativeLogin && goody.argEnvironmentVal != "" {
-					exec.Args = append(exec.Args, argEnvironment)
-					exec.Args = append(exec.Args, goody.argEnvironmentVal)
-				}
-				if o.isSet(flagServerID) {
-					exec.Args = append(exec.Args, argServerID)
-					exec.Args = append(exec.Args, o.TokenOptions.ServerID)
-				}
-
-				if o.isSet(flagClientID) {
-					exec.Args = append(exec.Args, argClientID)
-					exec.Args = append(exec.Args, o.TokenOptions.ClientID)
-				} else if !isAlternativeLogin && goody.argClientIDVal != "" {
-					// when MSI is enabled, the clientID in azure authInfo will be disregarded
-					exec.Args = append(exec.Args, argClientID)
-					exec.Args = append(exec.Args, goody.argClientIDVal)
-				}
-				if !isAlternativeLogin && o.isSet(flagTenantID) {
-					exec.Args = append(exec.Args, argTenantID)
-					exec.Args = append(exec.Args, o.TokenOptions.TenantID)
-				} else if !isAlternativeLogin && goody.argTenantIDVal != "" {
-					exec.Args = append(exec.Args, argTenantID)
-					exec.Args = append(exec.Args, goody.argTenantIDVal)
-				}
-				if !isAlternativeLogin && o.isSet(flagIsLegacy) && o.TokenOptions.IsLegacy {
-					exec.Args = append(exec.Args, argIsLegacy)
-				}
-
-				if !isAlternativeLogin && o.isSet(flagClientSecret) {
-					exec.Args = append(exec.Args, argClientSecret)
-					exec.Args = append(exec.Args, o.TokenOptions.ClientSecret)
-				}
-				if !isAlternativeLogin && o.isSet(flagClientCert) {
-					exec.Args = append(exec.Args, argClientCert)
-					exec.Args = append(exec.Args, o.TokenOptions.ClientCert)
-				}
-				if !isAlternativeLogin && o.isSet(flagUsername) {
-					exec.Args = append(exec.Args, argUsername)
-					exec.Args = append(exec.Args, o.TokenOptions.Username)
-				}
-				if !isAlternativeLogin && o.isSet(flagPassword) {
-					exec.Args = append(exec.Args, argPassword)
-					exec.Args = append(exec.Args, o.TokenOptions.Password)
-				}
-				if o.isSet(flagLoginMethod) {
-					exec.Args = append(exec.Args, argLoginMethod)
-					exec.Args = append(exec.Args, o.TokenOptions.LoginMethod)
-				}
-			default:
-				return fmt.Errorf("%q is not supported yet", o.TokenOptions.LoginMethod)
+			if goody.argServerIDVal == "" {
+				return fmt.Errorf("Err: Invalid arg %v", argServerID)
 			}
 
-		} else {
+			exec.Args = append(exec.Args, argServerID)
+			exec.Args = append(exec.Args, goody.argServerIDVal)
+			exec.Args = append(exec.Args, argLoginMethod)
+			exec.Args = append(exec.Args, o.TokenOptions.LoginMethod)
 
+		} else {
 			if !isAlternativeLogin && o.isSet(flagEnvironment) {
 				exec.Args = append(exec.Args, argEnvironment)
 				exec.Args = append(exec.Args, o.TokenOptions.Environment)
