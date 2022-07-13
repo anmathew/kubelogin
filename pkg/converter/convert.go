@@ -157,7 +157,6 @@ func Convert(o Options) error {
 			continue
 		}
 		goody := getGoody(o, authInfo)
-		fmt.Printf("goody: %#v\n", goody)
 
 		exec := &api.ExecConfig{
 			Command: execName,
@@ -168,16 +167,13 @@ func Convert(o Options) error {
 		}
 
 		if isExecUsingkubelogin(authInfo) {
-
 			if goody.argServerIDVal == "" {
 				return fmt.Errorf("Err: Invalid arg %v", argServerID)
 			}
-
 			exec.Args = append(exec.Args, argServerID)
 			exec.Args = append(exec.Args, goody.argServerIDVal)
 			exec.Args = append(exec.Args, argLoginMethod)
 			exec.Args = append(exec.Args, o.TokenOptions.LoginMethod)
-
 		} else {
 			if !isAlternativeLogin && o.isSet(flagEnvironment) {
 				exec.Args = append(exec.Args, argEnvironment)
