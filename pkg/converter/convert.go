@@ -106,6 +106,7 @@ func getGoody(o Options, authInfo *api.AuthInfo) (goodyPtr *goody) {
 	if o.isSet(flagServerID) {
 		goodyPtr.argServerIDVal = o.TokenOptions.ServerID
 	} else if authProviderBool {
+		// .. is special, we look for cfgApiserverID
 		x, ok := authInfo.AuthProvider.Config[cfgApiserverID]
 		if ok {
 			goodyPtr.argServerIDVal = x
@@ -166,7 +167,7 @@ func Convert(o Options) error {
 			APIVersion: execAPIVersion,
 		}
 
-		if isExecUsingkubelogin(authInfo) && o.TokenOptions.LoginMethod == token.AzureCLILogin {
+		if isExecUsingkubelogin(authInfo) {
 
 			if goody.argServerIDVal == "" {
 				return fmt.Errorf("Err: Invalid arg %v", argServerID)
