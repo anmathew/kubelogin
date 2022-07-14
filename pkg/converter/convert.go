@@ -48,11 +48,11 @@ func getArgValues(o Options, authInfo *api.AuthInfo) (argServerIDVal, argClientI
 	if authInfo == nil {
 		return
 	}
-	authProviderBool := authInfo.AuthProvider != nil
+	isLegacy := authInfo.AuthProvider != nil
 
 	if o.isSet(flagEnvironment) {
 		argEnvironmentVal = o.TokenOptions.Environment
-	} else if authProviderBool {
+	} else if isLegacy {
 		x, ok := authInfo.AuthProvider.Config[cfgEnvironment]
 		if ok {
 			argEnvironmentVal = x
@@ -63,7 +63,7 @@ func getArgValues(o Options, authInfo *api.AuthInfo) (argServerIDVal, argClientI
 
 	if o.isSet(flagTenantID) {
 		argTenantIDVal = o.TokenOptions.TenantID
-	} else if authProviderBool {
+	} else if isLegacy {
 		x, ok := authInfo.AuthProvider.Config[cfgTenantID]
 		if ok {
 			argTenantIDVal = x
@@ -74,7 +74,7 @@ func getArgValues(o Options, authInfo *api.AuthInfo) (argServerIDVal, argClientI
 
 	if o.isSet(flagClientID) {
 		argClientIDVal = o.TokenOptions.ClientID
-	} else if authProviderBool {
+	} else if isLegacy {
 		x, ok := authInfo.AuthProvider.Config[cfgClientID]
 		if ok {
 			argClientIDVal = x
@@ -85,7 +85,7 @@ func getArgValues(o Options, authInfo *api.AuthInfo) (argServerIDVal, argClientI
 
 	if o.isSet(flagServerID) {
 		argServerIDVal = o.TokenOptions.ServerID
-	} else if authProviderBool {
+	} else if isLegacy {
 		// .. is special, we look for cfgApiserverID
 		x, ok := authInfo.AuthProvider.Config[cfgApiserverID]
 		if ok {
@@ -97,7 +97,7 @@ func getArgValues(o Options, authInfo *api.AuthInfo) (argServerIDVal, argClientI
 
 	// cfgConfigMode available only in authInfo.AuthProvider.Config,
 	// although the same precedence would work here as well.
-	if authProviderBool {
+	if isLegacy {
 		x, ok := authInfo.AuthProvider.Config[cfgConfigMode]
 		if ok {
 			cfgConfigModeVal = x
